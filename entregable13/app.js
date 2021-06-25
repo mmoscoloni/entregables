@@ -4,6 +4,11 @@ const http = require('http').Server(app)
 const io = require('socket.io')(http)
 
 const productos = require('./api/productos')
+const mensajes = require('./api/mensajes')
+
+mensajes.load()
+
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -24,11 +29,19 @@ app.post('/api/productos/guardar', (req, res) => {
 
 io.on('connection', (socket) => {
     console.log("Usuario conectado")
-    socket.emit('actualizar', productos.listar)
+   
+    
+    socket.emit('actualizar-productos', productos.listar)
+    socket.emit('actualizar-mensajes', mensajes.listar)
 
     socket.on('guardar', (data) => {
         productos.agregar(data)
-        io.sockets.emit('actualizar', productos.listar)
+        io.sockets.emit('actualizar-productos', productos.listar)
+    })
+
+    socket.on('new-mensaje', (msg)=>{
+        mensajes.nuevoMensaje(msg)
+        io.sockets.emit('actualizar-mensajes', mensajes.listar)
     })
 })
 
