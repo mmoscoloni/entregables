@@ -1,64 +1,50 @@
-const fs = require('fs');
 
-class Productos{
-    constructor(){
-        this.productos = [];
-        this.id = 0;
+class Productos {
+
+    constructor () {
+        this.items = []
     }
 
-    listarTodos(){        
-        return this.productos;
+    get listar() {
+        return this.items
     }
-    
-    listarPorId(id){
-        let found = this.productos.find(element => element.id === id);
-        if(found==undefined){
-            found = {mensaje: "Producto no encontrado"};
+
+    agregar(producto) {
+        const newItem = {
+            id: this.items.length + 1,
+            ...producto
         }
-        return found;
+        this.items.push(newItem)
+
+        return newItem
     }
 
-    guardarProd(obj){
-        //TODO: leer los registros desde el filesystem
-        try {
-            this.productos.push({id:this.id++,timestamp:new Date().toISOString(), ...obj});
-            fs.writeFileSync('./src/assets/productos.txt', JSON.stringify(this.productos, null, '\t'));
-            return this.productos;    
-        } catch (error) {
-            return [{
-                error: error
-            }];
-        }
+    listarId(id) {
+        return this.items.find(prod => prod.id === Number(id))
     }
 
-    borrarProd(id){
-        try {
-            const producto = this.productos.find(item => item.id == id);
-            this.productos = this.productos.filter(a => a.id != id);
-            return producto;
-        } catch (error) {
-            return [{
-                error: error
-            }];
-        }
+    borrar(id) {
+        if (this.items.length == 0) { return {error: "No hay items cargados."}}
+        const item = this.items.find(prod => prod.id === Number(id)) || {error: "Producto no encontrado"}
+        this.items = this.items.filter(el => el.id !== Number(id))
+        return item
     }
 
-    actualizarProd(id, obj){
-        try {
-            const indice = this.productos.findIndex(item => item.id == id);
-            /* this.productos[indice].title = obj.title;
-            this.productos[indice].price = obj.price;
-            this.productos[indice].thumbnail = obj.thumbnail; */
-            this.productos[indice] = obj;
-            return this.productos[indice];
-        } catch (error) {
-            return [{
-                error: error
-            }];
+    actualizar(prod, id) {
+        if (this.items.length == 0) { return {error: "No hay items cargados."}}
+        const {title, price, thumbnail} = prod
+        const item = this.items.find(prod => prod.id === Number(id))
+        if (item) {
+            item.title = title
+            item.price = price
+            item.thumbnail = thumbnail
+            return item
+        } else {
+            return {error: "Producto no encontrado"}
         }
     }
-    
+
 }
 
-//exporto una instancia de la clase
-module.exports = new Productos();
+
+module.exports = new Productos()
