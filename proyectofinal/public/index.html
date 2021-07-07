@@ -11,9 +11,14 @@
 
     <h2>Ingrese Producto</h2>
     <form action="/api/productos/guardar" method="POST">
-        Nombre: <input type="text" name="title">
-        Precio: <input type="text" name="price">
-        Foto URL: <input type="text" name="thumbnail">
+        <ul>
+            <li>Nombre: <input type="text" name="title">        </li>
+            <li>Descripcion: <input type="text" name="description"></li>
+            <li>Codigo:<input type="text" name="code"></li>
+            <li>Precio: <input type="text" name="price"></li>
+            <li>Stock: <input type="text" name="stock"></li>
+            <li>Foto URL: <input type="text" name="thumbnail"></li>
+        </ul>
         <button>Enviar</button>
     </form>
 
